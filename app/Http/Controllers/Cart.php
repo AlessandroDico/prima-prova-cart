@@ -22,6 +22,7 @@ class Cart extends Controller {
     }
 
     public function index() {
+
         return view('cart');
     }
 //2
@@ -91,27 +92,50 @@ class Cart extends Controller {
 //7
 
     public function addToCart(Product $product, $quantity) {
-            if($quantity < 1 || $this->isInCart($product)) {
+    if($quantity < 1 /*|| $this->isInCart($product)*/) {
                 return;
             }
-            $item = [
-                'id' => $product->id,
-                'name' => $product->name,
-                'description' => $product->description,
-                'price' => $product->price,
-                'manufacturer' => $product->manufacturer,
-                'cover' => $product->cover,
-                'quantity' => $quantity,
-                'subtotal' => ($product->price * $quantity),
-                'slug' => $product->slug
-            ];
+    if ($this->isInCart($product)) {
+        // dd($product);
+        $quantity = $quantity + 1;
+        $item = [
+            'id' => $product->id,
+            'name' => $product->name,
+            'description' => $product->description,
+            'price' => $product->price,
+            'manufacturer' => $product->manufacturer,
+            'cover' => $product->cover,
+            'quantity' => $quantity,
+            'subtotal' => ($product->price * $quantity),
+            'slug' => $product->slug
+        ];
+    } else {
+        $item = [
+            'id' => $product->id,
+            'name' => $product->name,
+            'description' => $product->description,
+            'price' => $product->price,
+            'manufacturer' => $product->manufacturer,
+            'cover' => $product->cover,
+            'quantity' => $quantity,
+            'subtotal' => ($product->price * $quantity),
+            'slug' => $product->slug
+        ];
+    }
+
+
             $this->items[] = $item;
             $this->calculateTotal();
+
+            // dd($item);
+
+
         }
 
 //8
     private function isInCart(Product $product) {
             if( $this->hasItems()) {
+                // dd($this->items);
                foreach( $this->items as $item ) {
                    if($item['id'] == $product->id) {
                        return true;
@@ -210,6 +234,15 @@ class Cart extends Controller {
         return redirect()->route('cart.index');
     }
 
+// CHECKOUT
+    public function checkout(Request $request)
+        {
+            $sessionCart = $request->session()->get('cart');
+            if(!$sessionCart || count($sessionCart['items']) === 0) {
+                return redirect()->route('cart.index');
+            }
+            return view('checkout',['title' => 'Checkout | PHP E-commerce']);
+        }
 
 
 

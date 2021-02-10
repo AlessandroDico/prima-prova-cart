@@ -29,3 +29,6 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/cart', 'Cart@index')->name('cart.index');
 Route::post('/cart/{id}', 'Cart@add')->name('cart.send');
+// rotta checkout
+Route::get('/checkout', 'Cart@checkout')->name('checkout');
+// Route::get('/checkout', 'ShopController@checkout')->name('checkout');
