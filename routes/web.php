@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Product;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,12 +14,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    $newProduct = new Product();
+    $products = $newProduct->all();
+    $data = [
+        'products' => $products
+    ];
+
+    return view('guest.welcome', $data);
+})->name('casa');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
 
-///////
-Route::post('add-to-cart','Frontend\CartController@addtocart');
+Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/cart', 'Cart@index')->name('cart.index');
+Route::post('/cart/{id}', 'Cart@add')->name('cart.send');
